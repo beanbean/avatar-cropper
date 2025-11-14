@@ -10,5 +10,11 @@
   "observability": {
     "enabled": true
   },
+    "r2_buckets": [
+    {
+      "binding": "AVATARS",
+      "bucket_name": "marathon-avatars"
+    }
+  ],
   "upload_source_maps": true
 }
