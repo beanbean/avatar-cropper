@@ -5,8 +5,10 @@ compatibility_date = "2024-01-01"
 [ai]
 binding = "AI"
 
-[r2_buckets]
-bucket = { binding = "AVATAR", bucket_name = "marathon-avatars" }
+[[r2_buckets]]
+binding = "AVATAR"
+bucket_name = "marathon-avatars"
 
 [vars]
 ACCOUNT_ID = "65545c8268926986d34b2ef70b175070"
+
