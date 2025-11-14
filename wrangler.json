@@ -1,20 +1,11 @@
-{
-  "name": "avatar-cropper",
-  "compatibility_date": "2025-10-08",
-  "compatibility_flags": ["nodejs_compat"],
-  "main": "./dist/_worker.js/index.js",
-  "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS"
-  },
-  "observability": {
-    "enabled": true
-  },
-    "r2_buckets": [
-    {
-      "binding": "AVATARS",
-      "bucket_name": "marathon-avatars"
-    }
-  ],
-  "upload_source_maps": true
-}
+name = "avatar-cropper"
+ACCOUNT_ID = "65545c8268926986d34b2ef70b175070"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[ai]
+binding = "AI"
+
+[r2_buckets]
+bucket = { binding = "AVATAR", bucket_name = "marathon-avatars" }
+[vars]
