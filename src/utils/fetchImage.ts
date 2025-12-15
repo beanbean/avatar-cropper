@@ -13,11 +13,11 @@ export class FetchError extends Error {
 
 export async function fetchImage(url: string): Promise<Buffer> {
   // 1. SSRF Check
-  try {
-    await validateURL(url);
-  } catch (e: any) {
-    throw new FetchError('Private or blocked URL', 400);
-  }
+  //try {
+   // await validateURL(url);
+  //} catch (e: any) {
+   // throw new FetchError('Private or blocked URL', 400);
+//  }
 
   // 2. Fetch with Timeout
   const controller = new AbortController();
