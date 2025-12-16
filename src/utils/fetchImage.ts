@@ -3,6 +3,15 @@ import { validateURL } from './ssrf';
 const FETCH_TIMEOUT_MS = parseInt(process.env.FETCH_TIMEOUT_MS || '8000');
 const MAX_INPUT_BYTES = parseInt(process.env.MAX_INPUT_BYTES || '8000000');
 
+// --- CẤU HÌNH WHITELIST ---
+// Cho phép tải ảnh từ các domain này mà không cần check SSRF chặt
+const ALLOWED_DOMAINS = [
+  '.zdn.vn',       // Ví dụ: photo-stal-12.zdn.vn
+  '.zalo.me',      // Ví dụ: s120.zalo.me
+  '.zalo-file.me',
+  '.zadn.vn'
+];
+
 export class FetchError extends Error {
   statusCode: number;
   constructor(message: string, statusCode: number) {
@@ -11,11 +20,27 @@ export class FetchError extends Error {
   }
 }
 
-export async function fetchImage(url: string): Promise<Buffer> {
-  // 1. SSRF Check
+// Hàm kiểm tra xem URL có thuộc whitelist không
+function isWhitelisted(urlStr: string): boolean {
   try {
-   await validateURL(url);
+    const parsedUrl = new URL(urlStr);
+    const hostname = parsedUrl.hostname;
+    // Kiểm tra nếu hostname kết thúc bằng domain trong whitelist
+    return ALLOWED_DOMAINS.some(domain => hostname.endsWith(domain));
+  } catch (e) {
+    return false; // URL lỗi thì coi như không whitelist
+  }
+}
+
+export async function fetchImage(url: string): Promise<Buffer> {
+  // 1. SSRF Check (Đã nâng cấp)
+  try {
+    // CHỈ chạy validateURL nếu domain KHÔNG nằm trong whitelist
+    if (!isWhitelisted(url)) {
+       await validateURL(url);
+    }
   } catch (e: any) {
+    // Nếu validateURL báo lỗi thì throw
     throw new FetchError('Private or blocked URL', 400);
   }
 
@@ -58,6 +83,9 @@ export async function fetchImage(url: string): Promise<Buffer> {
       throw new FetchError('Fetch timeout', 504);
     }
     if (error instanceof FetchError) throw error;
+    
+    // Log lỗi chi tiết ra console server để debug nếu cần
+    console.error('Fetch Image Error:', error);
     throw new FetchError('Failed to fetch image', 422);
   }
 }
